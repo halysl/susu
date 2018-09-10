@@ -1,6 +1,8 @@
 # -*-coding:utf-8 -*-
 
 import scrapy
+from scrapy import log
+from scrapy_splash import SplashRequest
 from game_news.items import GameNewsItem
 
 
@@ -8,22 +10,28 @@ class SSXKSpider(scrapy.spiders.Spider):
     name = "SSXK"
     allowed_domains = ["gamersky.com/"]
     start_urls = [
-        "http://www.gamersky.com/news/201808/\d+.shtml",
+        "https://www.gamersky.com/ent/201809/1098158.shtml",
     ]
 
     def start_requests(self):
         for url in self.start_urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            yield SplashRequest(url=url,
+                                callback=self.parse,
+                                args={'wait': 0.5},
+                                endpoint='render.html',
+                                )
 
     def parse(self, response):
         item = GameNewsItem()
-        item['title'] = response.xpath('/html/body/div[10]/div/div[2]/div[1]/div[1]/div[2]/h1/text()').extract_first()
+        item['title'] = response.xpath('//*[@id="jcjbContentData"]/@title').extract_first()
 
-        temp = response.xpath('/html/body/div[10]/div/div[2]/div[1]/div[1]/div[2]/div/text()').extract_first()
+        temp = response.xpath('/html/body/div[10]/div[2]/div[1]/div[1]/div[2]/div/text()').extract_first()
 
-        item['time'] = "-".join([temp.strip().split(' ')[0], temp.strip().split(' ')[1]])
-        item['source'] = temp.strip().split('来源：')[1]
+        item['time'] = response.xpath('/html/body/div[10]/div[2]/div[1]/div[1]/div[2]/div/text()').extract()
+        item['source'] = []
 
-        item['body'] = response.xpath('/html/body/div[10]/div/div[2]/div[1]/div[1]/div[3]')
+        item['body'] = []
+
+        log.msg(item)
 
         yield item
