@@ -7,6 +7,7 @@ name = "pypi"
 ipython = "*"
 scrapy-splash = "*"
 requests = "*"
+tornado = "*"
 
 [dev-packages]
 
