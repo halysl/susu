@@ -8,6 +8,10 @@ ipython = "*"
 scrapy-splash = "*"
 requests = "*"
 tornado = "*"
+schema = "*"
+marshmallow = "*"
+pytest = "*"
+mock = "*"
 
 [dev-packages]
 
